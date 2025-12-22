@@ -3,6 +3,6 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="WebSocketClient.Core/WebSocketClient.Core.vcxproj" />
-  <Project Path="WebSocketClient.Desktop/WebSocketClient.Desktop.vcxproj" />
+  <Project Path="WebSocketClient.Core/WebSocketClient.Core.vcxproj" Id="8ce1979e-2afc-4b15-af6e-81bdbd3d92db" />
+  <Project Path="WebSocketClient.Desktop/WebSocketClient.Desktop.vcxproj" Id="913963a0-370d-4a71-963f-b4e7c5289989" />
 </Solution>

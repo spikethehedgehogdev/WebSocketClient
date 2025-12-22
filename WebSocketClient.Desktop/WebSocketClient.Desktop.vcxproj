@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)WebSocketClient.Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,6 +121,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)WebSocketClient.Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -128,6 +130,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ui_common.cpp" />
+    <ClCompile Include="ui_logger.cpp" />
+    <ClCompile Include="ws_ui_adapter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ui_common.h" />
+    <ClInclude Include="ui_logger.h" />
+    <ClInclude Include="ws_ui_adapter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebSocketClient.Core\WebSocketClient.Core.vcxproj">
+      <Project>{8ce1979e-2afc-4b15-af6e-81bdbd3d92db}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

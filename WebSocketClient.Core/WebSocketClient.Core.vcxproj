@@ -18,6 +18,24 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="event_dispatcher.h" />
+    <ClInclude Include="heartbeat.h" />
+    <ClInclude Include="reconnect_policy.h" />
+    <ClInclude Include="ws_client.h" />
+    <ClInclude Include="ws_client_impl.h" />
+    <ClInclude Include="ws_connection.h" />
+    <ClInclude Include="ws_url.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="event_dispatcher.cpp" />
+    <ClCompile Include="heartbeat.cpp" />
+    <ClCompile Include="reconnect_policy.cpp" />
+    <ClCompile Include="ws_client.cpp" />
+    <ClCompile Include="ws_client_impl.cpp" />
+    <ClCompile Include="ws_connection.cpp" />
+    <ClCompile Include="ws_url.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -111,7 +129,7 @@
       <PreprocessorDefinitions>_DEBUG;WEBSOCKETCLIENTCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\libs\boost_1_90_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -128,7 +146,7 @@
       <PreprocessorDefinitions>NDEBUG;WEBSOCKETCLIENTCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\libs\boost_1_90_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
