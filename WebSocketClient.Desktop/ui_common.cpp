@@ -1,6 +1,18 @@
 #include "ui_common.h"
 #include <chrono>
 
+static COLORREF g_status_color = RGB(0, 0, 0);
+
+void UiSetStatusColor(COLORREF color)
+{
+    g_status_color = color;
+}
+
+COLORREF UiGetStatusColor()
+{
+    return g_status_color;
+}
+
 std::wstring NowTime()
 {
     using namespace std::chrono;

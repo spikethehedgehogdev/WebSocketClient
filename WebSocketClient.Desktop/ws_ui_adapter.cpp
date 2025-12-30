@@ -3,11 +3,45 @@
 #include "ws_ui_adapter.h"
 #include <windows.h>
 
+static bool g_debug_log = false;
+
+void UiSetDebugLog(bool enable)
+{
+    g_debug_log = enable;
+}
+
+void UiLogDebug(const wchar_t* msg)
+{
+    if (!g_debug_log || !msg)
+        return;
+
+    UiPostLog(msg);
+}
+
+void UiLogInfo(const wchar_t* msg)
+{
+    if (!msg)
+        return;
+
+    UiPostLog(msg);
+}
+
 static void cb_connected(void*, int connected)
 {
-    UiPostStatus(connected ? L"CONNECTED" : L"DISCONNECTED");
-    UiPostLog(connected ? L"[ws] connected" : L"[ws] disconnected");
+    if (connected)
+    {
+        UiSetStatusColor(RGB(0, 140, 0));
+        UiPostStatus(L"CONNECTED");
+        UiLogDebug(L"[ws] connected");
+    }
+    else
+    {
+        UiSetStatusColor(RGB(180, 0, 0));
+        UiPostStatus(L"DISCONNECTED");
+        UiLogDebug(L"[ws] disconnected");
+    }
 }
+
 
 static void cb_timeout(void*)
 {
@@ -33,6 +67,11 @@ static void cb_data(void*, const char* data, int size, int is_text)
 
 static void cb_error(void*, int code, const char* message)
 {
+#ifdef _WIN32
+    if (!g_debug_log && code == ERROR_OPERATION_ABORTED)
+        return;
+#endif
+
     std::wstring wmsg = message ? Utf8ToWide(message) : L"";
     wchar_t buf[512];
     wsprintfW(buf, L"[error] code=%d msg=%s", code, wmsg.c_str());
@@ -42,7 +81,7 @@ static void cb_error(void*, int code, const char* message)
 static void cb_log(void*, const char* msg)
 {
     if (msg)
-        UiPostLog(Utf8ToWide(msg));
+    UiPostLog(Utf8ToWide(msg));
 }
 
 ws_client_callbacks MakeUiCallbacks()

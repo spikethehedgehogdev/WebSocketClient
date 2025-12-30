@@ -1,8 +1,58 @@
+# ========================
+# Visual Studio
+# ========================
 .vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.opendb
 *.vcxproj.user
+
+# ========================
+# Build output (C++ / Delphi)
+# ========================
 Debug/
 Release/
 x64/
+Win32/
+Win64/
+
 *.exe
 *.dll
 *.pdb
+*.map
+*.tds
+
+# ========================
+# Delphi / RAD Studio
+# ========================
+__history/
+__recovery/
+*.local
+*.identcache
+*.dcu
+*.rsm
+*.drc
+*.cfg
+*.stat
+*.log
+*.bpl
+*.dcp
+*.~*
+*.skincfg
+*.deployproj.local
+
+# ========================
+# CMake / temp (на всякий случай)
+# ========================
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+
+# ========================
+# OS
+# ========================
+Thumbs.db
+.DS_Store

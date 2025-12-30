@@ -16,6 +16,7 @@ static const int IDC_SEND_EDIT = 1005;
 static const int IDC_SEND_BTN = 1006;
 static const int IDC_LOG_EDIT = 1007;
 static const int IDC_STATUS_STATIC = 1008;
+static const int IDC_DEBUG_CHECK = 1009;
 
 static HINSTANCE g_hInst = nullptr;
 static HWND g_hMain = nullptr;
@@ -29,7 +30,9 @@ static ws_client_t* g_client = nullptr;
 
 static void DoConnect()
 {
-    UiPostLog(L"[ui] connect clicked");
+    UiLogDebug(L"[ui] connect clicked");
+    UiSetStatusColor(RGB(0, 0, 180));
+    UiPostStatus(L"CONNECTING...");
 
     const std::string url = WideToUtf8(GetWindowTextWString(g_hUrl));
     const std::string token = WideToUtf8(GetWindowTextWString(g_hToken));
@@ -41,13 +44,13 @@ static void DoConnect()
 
 static void DoDisconnect()
 {
-    UiPostLog(L"[ui] disconnect clicked");
+    UiLogDebug(L"[ui] disconnect clicked");
     ws_client_disconnect(g_client);
 }
 
 static void DoSend()
 {
-    UiPostLog(L"[ui] send clicked");
+    UiLogDebug(L"[ui] send clicked");
     const std::string text = WideToUtf8(GetWindowTextWString(g_hSend));
     ws_client_send_text(g_client, text.c_str());
 }
@@ -81,6 +84,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
         g_hStatus = CreateWindowW(L"STATIC", L"DISCONNECTED", WS_CHILD | WS_VISIBLE,
             75, 112, 300, 20, hWnd, (HMENU)IDC_STATUS_STATIC, g_hInst, 0);
 
+        UiSetStatusColor(RGB(180, 0, 0));
+        SetWindowTextW(g_hStatus, L"DISCONNECTED");
+        InvalidateRect(g_hStatus, nullptr, TRUE);
+
         CreateWindowW(L"STATIC", L"Send:", WS_CHILD | WS_VISIBLE,
             10, 140, 80, 20, hWnd, 0, g_hInst, 0);
 
@@ -93,6 +100,13 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
         g_hLog = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"",
             WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_READONLY | WS_VSCROLL,
             10, 195, 690, 355, hWnd, (HMENU)IDC_LOG_EDIT, g_hInst, 0);
+
+        CreateWindowW(
+            L"BUTTON", L"Debug log",
+            WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
+            580, 112, 120, 24,
+            hWnd, (HMENU)IDC_DEBUG_CHECK, g_hInst, 0
+        );
 
         SendMessageW(g_hUrl, WM_SETFONT, (WPARAM)hFont, TRUE);
         SendMessageW(g_hToken, WM_SETFONT, (WPARAM)hFont, TRUE);
@@ -110,9 +124,27 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
         case IDC_CONNECT_BTN:    DoConnect();    return 0;
         case IDC_DISCONNECT_BTN: DoDisconnect(); return 0;
         case IDC_SEND_BTN:       DoSend();       return 0;
+        case IDC_DEBUG_CHECK:
+        {
+            bool enabled = SendMessageW((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED;
+            UiSetDebugLog(enabled);
+            return 0;
+        }
         }
         break;
+    case WM_CTLCOLORSTATIC:
+    {
+        HDC hdc = (HDC)wParam;
+        HWND hCtrl = (HWND)lParam;
 
+        if (hCtrl == g_hStatus)
+        {
+            SetTextColor(hdc, UiGetStatusColor());
+            SetBkMode(hdc, TRANSPARENT);
+            return (LRESULT)GetSysColorBrush(COLOR_WINDOW);
+        }
+        break;
+    }
     case WM_APP + 1:
     {
         auto* s = reinterpret_cast<std::wstring*>(lParam);
@@ -124,6 +156,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
     {
         auto* s = reinterpret_cast<std::wstring*>(lParam);
         SetWindowTextW(g_hStatus, s->c_str());
+        InvalidateRect(g_hStatus, nullptr, TRUE);
         delete s;
         return 0;
     }

@@ -1,4 +1,9 @@
 #include "ws_connection.h"
+#include "ws_string.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #include <openssl/ssl.h>
 
@@ -92,6 +97,7 @@ void ws_connection::do_ssl_handshake()
         });
 }
 
+
 void ws_connection::do_ws_handshake()
 {
     const std::string host = make_host_header(url_);
@@ -137,7 +143,7 @@ void ws_connection::do_read()
                     if (ec)
                     {
                         if (ec != ws::error::closed)
-                            if (on_error_) on_error_(ec.value(), ec.message());
+                            fail(ec, "read");
 
                         if (on_close_) on_close_();
                         return;
@@ -213,8 +219,45 @@ void ws_connection::with_ws(Fn&& fn)
         return fn(*secure_);
 }
 
+#ifdef _WIN32
+static std::string win_error_message_utf8(DWORD code)
+{
+    LPWSTR buf = nullptr;
+
+    FormatMessageW(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
+        FORMAT_MESSAGE_FROM_SYSTEM |
+        FORMAT_MESSAGE_IGNORE_INSERTS,
+        nullptr,
+        code,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        (LPWSTR)&buf,
+        0,
+        nullptr
+    );
+
+    std::wstring wmsg = buf ? buf : L"";
+    if (buf)
+        LocalFree(buf);
+
+    return ws_string::to_utf8(wmsg.c_str());
+}
+#endif
+
 void ws_connection::fail(beast::error_code ec, const char* where)
 {
-    if (on_error_)
-        on_error_((int)ec.value(), std::string(where) + ": " + ec.message());
+    if (!on_error_)
+        return;
+
+#ifdef _WIN32
+    std::string msg =
+        std::string(where) + ": " +
+        win_error_message_utf8(ec.value());
+#else
+    std::string msg =
+        std::string(where) + ": " +
+        ec.message();
+#endif
+
+    on_error_((int)ec.value(), msg);
 }

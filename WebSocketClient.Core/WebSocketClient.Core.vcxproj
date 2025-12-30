@@ -25,6 +25,7 @@
     <ClInclude Include="ws_client.h" />
     <ClInclude Include="ws_client_impl.h" />
     <ClInclude Include="ws_connection.h" />
+    <ClInclude Include="ws_string.h" />
     <ClInclude Include="ws_url.h" />
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +35,7 @@
     <ClCompile Include="ws_client.cpp" />
     <ClCompile Include="ws_client_impl.cpp" />
     <ClCompile Include="ws_connection.cpp" />
+    <ClCompile Include="ws_string.cpp" />
     <ClCompile Include="ws_url.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
