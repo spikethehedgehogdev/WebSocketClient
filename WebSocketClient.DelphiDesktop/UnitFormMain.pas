@@ -79,7 +79,7 @@ var
 begin
   if message = nil then Exit;
   Form := TFormMain(user);
-  Form.Log(string(AnsiString(message)), lkWs);
+  Form.Log(UTF8ToString(message), lkWs);
 end;
 
 procedure cb_error(user: Pointer; code: Integer; message: PAnsiChar); cdecl;
@@ -90,7 +90,7 @@ begin
   Form := TFormMain(user);
   Msg := '';
   if message <> nil then
-    Msg := string(AnsiString(message));
+    Msg := UTF8ToString(message);
 
   Form.Log(Format('[error] code=%d msg=%s', [code, Msg]), lkError);
 end;
@@ -98,14 +98,14 @@ end;
 procedure cb_data(user: Pointer; data: PAnsiChar; size: Integer; is_text: Integer); cdecl;
 var
   Form: TFormMain;
-  S: string;
+  Utf8: UTF8String;
 begin
   if (data = nil) or (size <= 0) then Exit;
   Form := TFormMain(user);
 
-  SetString(S, data, size);
+  SetString(Utf8, data, size);
   if is_text <> 0 then
-    Form.Log('[data:text] ' + S, lkData)
+    Form.Log('[data:text] ' + UTF8ToString(Utf8), lkData)
   else
     Form.Log('[data:bin] ' + IntToStr(size) + ' bytes', lkData);
 end;
